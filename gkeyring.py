@@ -1,6 +1,14 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-
+#
+# A simple Python tool for command-line access to GNOME keyring. It provides
+# simple querying for and storing of credentials.
+#
+# Author: Kamil Páral <kamil.paral /at/ gmail /dot/ com>, 2009
+#
+# This program is free software, licensed under GNU AGPL 3:
+# http://www.gnu.org/licenses/agpl-3.0.html
+#
 # Based on the work of Sebastian Rittau: http://www.rittau.org/blog/20070726-01
 
 import sys, optparse, getpass, traceback
