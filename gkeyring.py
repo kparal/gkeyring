@@ -1,8 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-# A simple Python tool for command-line access to GNOME keyring. It provides
-# simple querying for and storing of credentials.
+# A small Python tool for command-line access to GNOME keyring. It provides
+# simple querying for and storing of network credentials. It can be used as
+# a CLI or as a Python module.
 #
 # Author: Kamil Páral <kamil.paral /at/ gmail /dot/ com>, 2009
 #
@@ -36,8 +37,8 @@ class CLI(object):
         Returns False if something is wrong.
         '''
 
-        desc="Use 'get' for retrieving credentials from GNOME keyring and \
-'set' for storing credentials into the keyring."
+        desc="Use 'get' for retrieving network credentials from GNOME keyring \
+and 'set' for storing network credentials into the keyring."
 
         parser = optparse.OptionParser(description=desc, version=_version)
         parser.epilog = 'Example usage: %s get -s myserver.com -p ftp' \
@@ -108,7 +109,7 @@ class CLI(object):
         sys.exit(0)
 
     def _query(self):
-        ''' Get credentials from keyring '''
+        ''' Get network credentials from keyring '''
 
         o = self.options
         matches = self.keyring.get_credentials(o.server, o.protocol, o.user)
@@ -124,7 +125,7 @@ class CLI(object):
             print line
 
     def _create(self):
-        ''' Store credentials into keyring '''
+        ''' Store network credentials into keyring '''
 
         o = self.options
         try:
