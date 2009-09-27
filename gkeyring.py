@@ -16,7 +16,7 @@ import sys, optparse, getpass, traceback
 import gtk # ensure that the application name is correctly set
 import gnomekeyring as gkey
 
-_version = '0.1.0'
+_version = '0.1.0.devel'
 
 class CLI(object):
     ''' Class providing command-line interface '''
@@ -118,7 +118,7 @@ and 'set' for storing network credentials into the keyring."
 
         print >>sys.stderr, '# server [TAB] user [TAB] password'
         for match in matches:
-            line = '%s:%s' % (match['protocol'], match['server'])
+            line = '%s://%s' % (match['protocol'], match['server'])
             if 'port' in match:
                 line += ':%s' % match['port']
             line += '\t%s\t%s' % (match['user'], match['password'])
