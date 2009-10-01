@@ -37,10 +37,14 @@ class CLI(object):
         Returns False if something is wrong.
         '''
 
-        desc="Use 'get' for retrieving network credentials from GNOME keyring \
-and 'set' for storing network credentials into the keyring."
+        desc="""Use 'get' for retrieving network credentials from GNOME keyring \
+and 'set' for storing network credentials into the keyring.
 
-        parser = optparse.OptionParser(description=desc, version=_version)
+If you are getting credentials, they will be in the form:
+server [TAB] user [TAB] password
+If there are multiple results matching your query, they will be on multiple lines."""
+
+        parser = MyOptionParser(description=desc, version=_version)
         parser.epilog = 'Example usage: %s get -s myserver.com -p ftp' \
 % parser.get_prog_name()
 
@@ -116,7 +120,6 @@ and 'set' for storing network credentials into the keyring."
         if not matches:
             sys.exit(3)
 
-        print >>sys.stderr, '# server [TAB] user [TAB] password'
         for match in matches:
             line = '%s://%s' % (match['protocol'], match['server'])
             if 'port' in match:
@@ -190,6 +193,17 @@ class Keyring(object):
 
 class KeyringError(Exception):
     ''' Base exception for all errors coming from this module. '''
+
+
+class MyOptionParser(optparse.OptionParser):
+    '''Overridden OptionParser not to format description and epilog, because
+    the native formatting does not respect newlines.
+    '''
+    def format_description(self, formatter):
+        return self.get_description() + '\n'
+        
+    def format_epilog(self, formatter):
+        return '\n' + self.epilog + '\n'
 
 
 if __name__ == '__main__':
