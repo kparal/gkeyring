@@ -37,12 +37,14 @@ class CLI(object):
         Returns False if something is wrong.
         '''
 
-        desc="""Use 'get' for retrieving network credentials from GNOME keyring \
-and 'set' for storing network credentials into the keyring.
+        desc=\
+"""Use 'get' for retrieving network credentials from GNOME keyring and 'set'
+for storing network credentials into the keyring.
 
 If you are getting credentials, they will be in the form:
 server [TAB] user [TAB] password
-If there are multiple results matching your query, they will be on multiple lines."""
+If there are multiple results matching your query, they will be on multiple
+lines."""
 
         parser = MyOptionParser(description=desc, version=_version)
         parser.epilog = 'Example usage: %s get -s myserver.com -p ftp' \
