@@ -96,7 +96,7 @@ lines."""
             # check mandatory options
             set_mandatory = ['server', 'protocol', 'user', 'password']
             for mand in set_mandatory:
-                if options.__dict__[mand] == None:
+                if options.__dict__[mand] is None:
                     parser.error('Mandatory option is missing! See --help.')
 
         return True
