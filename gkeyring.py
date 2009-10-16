@@ -16,7 +16,7 @@ import sys, optparse, getpass, traceback
 import gtk # ensure that the application name is correctly set
 import gnomekeyring as gkey
 
-_version = '0.1.0.devel'
+_version = '0.1.0.99'
 
 class CLI(object):
     ''' Class providing command-line interface '''
