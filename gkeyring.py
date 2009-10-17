@@ -107,6 +107,10 @@ lines."""
         if not self.parse_args():
             sys.exit(2)
 
+        if not gkey.is_available():
+            print >>sys.stderr, "GNOME keyring is not available!"
+            sys.exit(5)
+
         if self.mode == CLI.GET:
             self._query()
         elif self.mode == CLI.SET:
