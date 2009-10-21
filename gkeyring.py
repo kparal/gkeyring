@@ -13,7 +13,7 @@ import sys, optparse, getpass
 import gtk # ensure that the application name is correctly set
 import gnomekeyring as gk
 
-_version = '0.1.0.99'
+_version = '0.2.0'
 
 class CLI(object):
     ''' Class providing command-line interface for GNOME keyring '''
