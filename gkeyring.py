@@ -6,7 +6,7 @@
 #
 # Author: Kamil Páral <kamil.paral /at/ gmail /dot/ com>, 2009
 #
-# This program is free software, licensed under GNU AGPL 3:
+# This program is a free software, licensed under GNU AGPL 3:
 # http://www.gnu.org/licenses/agpl-3.0.html
 
 import sys, optparse, getpass
