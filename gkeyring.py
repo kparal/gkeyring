@@ -104,7 +104,7 @@ $ %(prog)s -p account_name=my@jabber.org -i gajim=1 -1
 Search for keyring item with property 'account_name' with value 'my@jabber.org'
 and property 'gajim' with integer value '1'. Output only the secret(s).
 
-$ %(prog)s --type network --p server=my.com,protocol=ftp --output user,secret
+$ %(prog)s --type network -p server=my.com,protocol=ftp --output user,secret
 Search for network keyring item with 'server' and 'protocol' properties. Output
 property 'user' followed by item's secret.
 
