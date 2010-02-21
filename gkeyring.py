@@ -10,7 +10,6 @@
 # http://www.gnu.org/licenses/agpl-3.0.html
 
 import sys, optparse, getpass
-import gtk # ensure that the application name is correctly set
 import gnomekeyring as gk
 
 _version = '0.2.0.99'
@@ -114,6 +113,11 @@ Create a new item in keyring 'login' with name 'foo' and property 'bar'."""
 
         (options, args) = parser.parse_args()
         self.options = options
+
+        # ensure that the application name is correctly set
+        # this must be done after parsing args, because
+        # our --name option collides with gtk option --name
+        import gtk
 
         if not gk.is_available():
             print >>sys.stderr, 'GNOME keyring is not available!'
