@@ -60,7 +60,7 @@ When a new keyring item is created, its ID is printed out on the output.'''
 
         parser = MyOptionParser(description=desc, version=_version)
 
-        parser.add_option('-t', '--type', choices=CLI.ITEM_TYPES.keys(), 
+        parser.add_option('-t', '--type', choices=CLI.ITEM_TYPES.keys(),
             default='generic', help='type of keyring item: '
             'generic, network or note [default: %default]')
         parser.add_option('-k', '--keyring', help='keyring name [default: '
@@ -70,10 +70,10 @@ When a new keyring item is created, its ID is printed out on the output.'''
             metavar='PARAM1=VALUE1,PARAM2=VALUE2', dest='params',
             help='params and values of keyring item, e.g. user, server, '
             'protocol, etc.')
-        parser.add_option('-i', default='', 
-            metavar='PARAM1=VALUE1,PARAM2=VALUE2', dest='params_int', 
+        parser.add_option('-i', default='',
+            metavar='PARAM1=VALUE1,PARAM2=VALUE2', dest='params_int',
             help='same as -p, but values are treated as integers, not strings')
-    
+
         out_group = optparse.OptionGroup(parser, 'Formatting output for '
             'querying keyring items')
         out_group.add_option('-o', '--output', default='id,secret',
@@ -81,15 +81,17 @@ When a new keyring item is created, its ID is printed out on the output.'''
             " Column name may include any name of item's property or keywords "
             "'id', 'secret' and 'name'. Columns will be separated by tabs. "
             "[default: %default]")
+        out_group.add_option('-l', '--no-newline', action='store_true',
+            help="don't output the trailing newline")
         out_group.add_option('-1', action='store_true', dest='output1',
-            help="same as '--output secret'")
+            help="same as '--output secret --no-newline'")
         parser.add_option_group(out_group)
 
         set_group = optparse.OptionGroup(parser, 'Options specific for '
             'creating keyring items')
-        set_group.add_option('-s', '--set', action='store_true', default=False, 
+        set_group.add_option('-s', '--set', action='store_true', default=False,
             help='create a new item in the keyring instead of querying')
-        set_group.add_option('-n', '--name', 
+        set_group.add_option('-n', '--name',
             help='keyring item descriptive name [mandatory if --set]')
         set_group.add_option('-w', '--password', help='keyring item password')
         parser.add_option_group(set_group)
@@ -158,9 +160,10 @@ Create a new item in keyring 'login' with name 'foo' and property 'bar'."""
             self.keyring = options.keyring
         else:
             self.keyring = gk.get_default_keyring_sync()
-            
+
         if options.output1:
             options.output = 'secret'
+            options.no_newline = True
 
         if options.set:
             if not options.name:
@@ -168,12 +171,13 @@ Create a new item in keyring 'login' with name 'foo' and property 'bar'."""
             if not options.password:
                 # ask for password
                 options.password = getpass.getpass()
-        
+
         self.secret = options.password
         self.id = options.id
         self.name = options.name
         self.item_type = CLI.ITEM_TYPES[options.type]
         self.output = options.output.split(',')
+        self.no_newline = options.no_newline
 
         return True
 
@@ -213,7 +217,7 @@ Create a new item in keyring 'login' with name 'foo' and property 'bar'."""
                     if 'name' in self.output:
                         # do this only when required, because it pops up
                         # one more 'allow access?' dialog
-                        info = gk.item_get_info_sync(self.keyring, 
+                        info = gk.item_get_info_sync(self.keyring,
                                                      match.item_id)
                         result['name'] = info.get_display_name()
                 results.append(result)
@@ -223,19 +227,30 @@ Create a new item in keyring 'login' with name 'foo' and property 'bar'."""
         if not results:
             return False
 
-        for result in results:
-            for tab in self.output:
+        for index, result in enumerate(results):
+            if index > 0:
+                print
+
+            for index2, tab in enumerate(self.output):
+                if index2 > 0:
+                    sys.stdout.write('\t')
+
+                out = None
                 if tab == 'id':
-                    print result['id'],
+                    out = result['id']
                 elif tab == 'secret':
-                    print result['secret'],
+                    out = result['secret']
                 elif tab == 'name':
-                    print result['name'],
+                    out = result['name']
                 elif tab in result['attr']:
-                    print result['attr'][tab],
-                print '\t',
+                    out = result['attr'][tab]
+
+                if out:
+                    sys.stdout.write(str(out))
+
+        if not self.no_newline:
             print
-            
+
         return True
 
     def create(self):
@@ -250,7 +265,7 @@ Create a new item in keyring 'login' with name 'foo' and property 'bar'."""
         except gk.Error, e:
             print >>sys.stderr, 'Error creating keyring item!\nDetails:\n%s'%e
             return False
-            
+
         print id
 
         return True
@@ -274,3 +289,4 @@ if __name__ == '__main__':
     except KeyboardInterrupt:
         print 'Interrupted, exiting...'
         sys.exit(1)
+
