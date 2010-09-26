@@ -19,7 +19,7 @@ or by:
 Installation
 ============
 
-You can also install this tool using distutils [1] or setuptools [2] and have it in your PATH that way.
+You can install this tool using distutils [1], setuptools [2] or pip [3] and have it in your PATH that way.
 
 The recommended way:
 
@@ -27,10 +27,7 @@ The recommended way:
   
 That will find, download and install the latest available version of gkeyring.
 
-The traditional way of installation is also possible:
-
-  $ python setup.py install
-
 [1] http://docs.python.org/install/index.html#install-index
 [2] http://peak.telecommunity.com/DevCenter/setuptools
+[3] http://pip.openplans.org/
 
