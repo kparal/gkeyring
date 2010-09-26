@@ -12,7 +12,7 @@
 import sys, optparse, getpass
 import gnomekeyring as gk
 
-_version = '0.2.2'
+_version = '0.2.3'
 
 class CLI(object):
     ''' Class providing command-line interface for GNOME keyring '''
@@ -282,11 +282,16 @@ class MyOptionParser(optparse.OptionParser):
         return '\n' + (self.epilog or '') + '\n'
 
 
-if __name__ == '__main__':
+def main():
+    '''Main program loop'''
     try:
         c = CLI()
         c.execute()
     except KeyboardInterrupt:
         print 'Interrupted, exiting...'
         sys.exit(1)
+
+
+if __name__ == '__main__':
+    main()
 

@@ -1,0 +1,36 @@
+gkeyring
+========
+
+A small Python tool for shell access to GNOME keyring. It provides simple querying for and creating of keyring items.
+
+Running
+=======
+
+You can run the tool directly simply by:
+
+  $ ./gkeyring.py
+
+or by:
+
+  $ python gkeyring.py
+
+(use --help option of course if you don't know this tool yet)
+
+Installation
+============
+
+You can also install this tool using distutils [1] or setuptools [2] and have it in your PATH that way.
+
+The recommended way:
+
+  $ easy_install -U gkeyring
+  
+That will find, download and install the latest available version of gkeyring.
+
+The traditional way of installation is also possible:
+
+  $ python setup.py install
+
+[1] http://docs.python.org/install/index.html#install-index
+[2] http://peak.telecommunity.com/DevCenter/setuptools
+
