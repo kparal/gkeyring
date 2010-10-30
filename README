@@ -31,3 +31,9 @@ That will find, download and install the latest available version of gkeyring.
 [2] http://peak.telecommunity.com/DevCenter/setuptools
 [3] http://pip.openplans.org/
 
+License
+=======
+
+This program is a free software, licensed under GNU AGPL 3:
+http://www.gnu.org/licenses/agpl-3.0.html
+
