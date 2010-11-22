@@ -23,7 +23,7 @@ You can install this tool using distutils [1], setuptools [2] or pip [3] and hav
 
 The recommended way:
 
-  $ easy_install -U gkeyring
+  # easy_install -U gkeyring
   
 That will find, download and install the latest available version of gkeyring.
 
