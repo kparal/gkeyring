@@ -4,7 +4,7 @@
 # A small Python tool for shell access to GNOME keyring. It provides
 # simple querying for and creating of keyring items.
 #
-# Author: Kamil Páral <kamil.paral /at/ gmail /dot/ com>, 2009-2010
+# Author: Kamil Páral <kamil.paral /at/ gmail /dot/ com>, 2009-2011
 #
 # This program is a free software, licensed under GNU AGPL 3:
 # http://www.gnu.org/licenses/agpl-3.0.html
@@ -12,7 +12,7 @@
 import sys, optparse, getpass
 import gnomekeyring as gk
 
-_version = '0.2.3'
+_version = '0.2.3.99'
 
 class CLI(object):
     ''' Class providing command-line interface for GNOME keyring '''
@@ -220,7 +220,7 @@ Create a new item in keyring 'login' with name 'foo' and property 'bar'."""
                         info = gk.item_get_info_sync(self.keyring,
                                                      match.item_id)
                         result['name'] = info.get_display_name()
-                results.append(result)
+                    results.append(result)
         except gk.Error:
             pass
 

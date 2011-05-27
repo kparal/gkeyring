@@ -1,9 +1,10 @@
 #!/usr/bin/env python
 
-from setuptools import setup, find_packages
+from setuptools import setup
+import gkeyring
 
 setup(name='gkeyring',
-      version='0.2.3',
+      version=gkeyring._version,
       py_modules=['gkeyring'],
       entry_points = {
         'console_scripts': ['gkeyring = gkeyring:main'],
