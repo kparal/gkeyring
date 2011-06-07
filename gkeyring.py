@@ -12,7 +12,7 @@
 import sys, optparse, getpass
 import gnomekeyring as gk
 
-_version = '0.2.3.99'
+_version = '0.2.4'
 
 class CLI(object):
     ''' Class providing command-line interface for GNOME keyring '''
