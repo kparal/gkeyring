@@ -45,3 +45,5 @@ Contact
 =======
 
 Visit `program homepage <https://launchpad.net/gkeyring>`_ and `support forum <https://answers.launchpad.net/gkeyring>`_.
+
+Please report all bugs to the `issue tracker <https://github.com/kparal/gkeyring/issues>`_, but don't request new features unless you have a patch for it. This is a small personal project and I don't plan to spend much more time on it. I will gladly merge your patches if they look reasonable.
