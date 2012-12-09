@@ -44,6 +44,4 @@ If you like this program, please `Flattr it <https://flattr.com/thing/49165/gkey
 Contact
 =======
 
-Visit program homepage at:
-https://launchpad.net/gkeyring
-
+Visit `program homepage <https://launchpad.net/gkeyring>`_ and `support forum <https://answers.launchpad.net/gkeyring>`_.
