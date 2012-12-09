@@ -12,7 +12,7 @@
 import sys, optparse, getpass
 import gnomekeyring as gk
 
-_version = '0.2.4'
+_version = '0.2.4.99'
 
 class CLI(object):
     ''' Class providing command-line interface for GNOME keyring '''
@@ -96,6 +96,13 @@ When a new keyring item is created, its ID is printed out on the output.'''
         set_group.add_option('-w', '--password', help='keyring item password')
         parser.add_option_group(set_group)
 
+        set_group = optparse.OptionGroup(parser, 'Options specific for '
+            'deleting keyring items')
+        set_group.add_option(
+            '-d', '--delete', action='store_true', default=False,
+            help="delete the item in the keyring identified by '--id'")
+        parser.add_option_group(set_group)
+
         epilog=\
 """Example usage:
 $ %(prog)s --id 12
@@ -110,7 +117,10 @@ Search for network keyring item with 'server' and 'protocol' properties. Output
 property 'user' followed by item's secret.
 
 $ %(prog)s --set --name 'foo' -p bar=baz --keyring login
-Create a new item in keyring 'login' with name 'foo' and property 'bar'."""
+Create a new item in keyring 'login' with name 'foo' and property 'bar'.
+
+$ %(prog)s --delete --id 12
+Delete a keyring item with ID 12."""
         parser.epilog = epilog % {'prog': parser.get_prog_name()}
 
         (options, args) = parser.parse_args()
@@ -189,6 +199,8 @@ Create a new item in keyring 'login' with name 'foo' and property 'bar'."""
 
         if self.options.set:
             ret = self.create()
+        elif self.options.delete:
+            ret = self.delete()
         else:
             ret = self.query()
 
@@ -267,6 +279,20 @@ Create a new item in keyring 'login' with name 'foo' and property 'bar'."""
             return False
 
         print id
+
+        return True
+
+    def delete(self):
+        ''' Delete a keyring item.
+
+        Return True if item created successfully, False otherwise.
+        '''
+
+        try:
+            gk.item_delete_sync(self.keyring, self.id)
+        except gk.Error, e:
+            print >>sys.stderr, 'Error deleting keyring item!\nDetails:\n%s'%e
+            return False
 
         return True
 
