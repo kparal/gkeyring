@@ -81,6 +81,8 @@ When a new keyring item is created, its ID is printed out on the output.'''
             " Column name may include any name of item's property or keywords "
             "'id', 'secret' and 'name'. Columns will be separated by tabs. "
             "[default: %default]")
+        out_group.add_option('-O', '--output-attribute-names', action='store_true',
+            help='show attribute names in addition to values')
         out_group.add_option('-l', '--no-newline', action='store_true',
             help="don't output the trailing newline")
         out_group.add_option('-1', action='store_true', dest='output1',
@@ -188,6 +190,7 @@ Delete a keyring item with ID 12."""
         self.item_type = CLI.ITEM_TYPES[options.type]
         self.output = options.output.split(',')
         self.no_newline = options.no_newline
+        self.output_attribute_names = options.output_attribute_names
 
         return True
 
@@ -246,6 +249,9 @@ Delete a keyring item with ID 12."""
             for index2, tab in enumerate(self.output):
                 if index2 > 0:
                     sys.stdout.write('\t')
+
+                if self.output_attribute_names:
+                    sys.stdout.write(tab + '=')
 
                 out = None
                 if tab == 'id':
