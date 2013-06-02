@@ -42,7 +42,7 @@ class CLI(object):
         desc=\
 '''By default %prog queries the GNOME keyring for items matching specified
 arguments. You can define the item exactly by --id, or search for it using
--p and/or -i.
+--name, -p and/or -i.
 
 It is important to understand that the keyring items are divided into several
 types (see --type) and each contain several properties. Both the item type and
@@ -54,7 +54,7 @@ a line, by default in the format:
 ID [TAB] secret
 
 You can also create a new keyring item using --set. In this case the arguments
--p and/or -i are mandatory and will be used as properties of the new item.
+-p and/or -i will be used as properties of the new item.
 
 When a new keyring item is created, its ID is printed out on the output.'''
 
@@ -66,6 +66,8 @@ When a new keyring item is created, its ID is printed out on the output.'''
         parser.add_option('-k', '--keyring', help='keyring name [default: '
             'default keyring]', dest=self.keyring)
         parser.add_option('--id', type='int', help='key ID')
+        parser.add_option('-n', '--name',
+            help='keyring item descriptive name [mandatory if --set]')
         parser.add_option('-p', default='',
             metavar='PARAM1=VALUE1,PARAM2=VALUE2', dest='params',
             help='params and values of keyring item, e.g. user, server, '
@@ -93,8 +95,6 @@ When a new keyring item is created, its ID is printed out on the output.'''
             'creating keyring items')
         set_group.add_option('-s', '--set', action='store_true', default=False,
             help='create a new item in the keyring instead of querying')
-        set_group.add_option('-n', '--name',
-            help='keyring item descriptive name [mandatory if --set]')
         set_group.add_option('-w', '--password', help='keyring item password')
         parser.add_option_group(set_group)
 
@@ -110,6 +110,10 @@ When a new keyring item is created, its ID is printed out on the output.'''
 $ %(prog)s --id 12
 Get keyring item with ID 12 in default keyring.
 
+$ %(prog)s --name 'backup'
+Search for keyring item with name 'backup'. You can easily see item names e.g.
+in the overview of Seahorse application.
+
 $ %(prog)s -p account_name=my@jabber.org -i gajim=1 -1
 Search for keyring item with property 'account_name' with value 'my@jabber.org'
 and property 'gajim' with integer value '1'. Output only the secret(s).
@@ -122,7 +126,8 @@ $ %(prog)s --set --name 'foo' -p bar=baz --keyring login
 Create a new item in keyring 'login' with name 'foo' and property 'bar'.
 
 $ %(prog)s --delete --id 12
-Delete a keyring item with ID 12."""
+Delete a keyring item with ID 12.
+"""
         parser.epilog = epilog % {'prog': parser.get_prog_name()}
 
         (options, args) = parser.parse_args()
@@ -137,9 +142,9 @@ Delete a keyring item with ID 12."""
             print >>sys.stderr, 'GNOME keyring is not available!'
             return False
 
-        if not options.params and not options.params_int and \
-        (options.set or not options.id):
-            parser.error('Missing option -p or -i! See --help.')
+        if not options.params and not options.params_int and not options.name \
+           and (options.set or not options.id):
+            parser.error('Missing option --name, -p, -i or --id! See --help.')
 
         # parse string params
         try:
@@ -229,13 +234,15 @@ Delete a keyring item with ID 12."""
                 for match in matches:
                     result = {'id': match.item_id, 'secret': match.secret,
                               'attr': match.attributes}
-                    if 'name' in self.output:
+                    if self.name or 'name' in self.output:
                         # do this only when required, because it pops up
                         # one more 'allow access?' dialog
                         info = gk.item_get_info_sync(self.keyring,
                                                      match.item_id)
                         result['name'] = info.get_display_name()
-                    results.append(result)
+                    # filter by name if desired
+                    if not self.name or self.name == result['name']:
+                        results.append(result)
         except gk.Error:
             pass
 
