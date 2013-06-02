@@ -91,19 +91,19 @@ When a new keyring item is created, its ID is printed out on the output.'''
             help="same as '--output secret --no-newline'")
         parser.add_option_group(out_group)
 
-        set_group = optparse.OptionGroup(parser, 'Options specific for '
-            'creating keyring items')
-        set_group.add_option('-s', '--set', action='store_true', default=False,
+        other_group = optparse.OptionGroup(parser, 'Other operations')
+        other_group.add_option('-s', '--set', action='store_true',
             help='create a new item in the keyring instead of querying')
-        set_group.add_option('-w', '--password', help='keyring item password')
-        parser.add_option_group(set_group)
-
-        set_group = optparse.OptionGroup(parser, 'Options specific for '
-            'deleting keyring items')
-        set_group.add_option(
-            '-d', '--delete', action='store_true', default=False,
+        other_group.add_option('-d', '--delete', action='store_true',
             help="delete the item in the keyring identified by '--id'")
-        parser.add_option_group(set_group)
+        other_group.add_option('--lock', action='store_true',
+            help='lock the keyring')
+        other_group.add_option('--unlock', action='store_true',
+            help='unlock the keyring')
+        other_group.add_option('-w', '--password',
+            help='provide a password for operations that require it; otherwise'
+                 'you will be asked for it interactively')
+        parser.add_option_group(other_group)
 
         epilog=\
 """Example usage:
@@ -127,6 +127,12 @@ Create a new item in keyring 'login' with name 'foo' and property 'bar'.
 
 $ %(prog)s --delete --id 12
 Delete a keyring item with ID 12.
+
+$ %(prog)s --lock --keyring login
+Lock keyring 'login'.
+
+$ %(prog)s --unlock --password qux
+Unlock the default keyring and provide the password 'qux' on the command-line.
 """
         parser.epilog = epilog % {'prog': parser.get_prog_name()}
 
@@ -142,9 +148,21 @@ Delete a keyring item with ID 12.
             print >>sys.stderr, 'GNOME keyring is not available!'
             return False
 
-        if not options.params and not options.params_int and not options.name \
-           and (options.set or not options.id):
-            parser.error('Missing option --name, -p, -i or --id! See --help.')
+        # validate mandatory options
+        query_mode = not (options.set or options.delete or
+                          options.lock or options.unlock)
+        if query_mode:
+            if not (options.params or options.params_int or options.name or
+                    options.id):
+                parser.error('Missing --name, -p, -i or --id! See --help.')
+
+        if options.set:
+            if not options.name:
+                parser.error('Missing --name! See --help.')
+
+        if options.delete:
+            if not options.id:
+                parser.error('Missing --id! See --help.')
 
         # parse string params
         try:
@@ -182,12 +200,9 @@ Delete a keyring item with ID 12.
             options.output = 'secret'
             options.no_newline = True
 
-        if options.set:
-            if not options.name:
-                parser.error('Missing --name! See --help.')
-            if not options.password:
-                # ask for password
-                options.password = getpass.getpass()
+        if (options.set or options.unlock) and not options.password:
+            # ask for password
+            options.password = getpass.getpass()
 
         self.secret = options.password
         self.id = options.id
@@ -209,6 +224,10 @@ Delete a keyring item with ID 12.
             ret = self.create()
         elif self.options.delete:
             ret = self.delete()
+        elif self.options.lock:
+            ret = self.lock();
+        elif self.options.unlock:
+            ret = self.unlock();
         else:
             ret = self.query()
 
@@ -305,6 +324,30 @@ Delete a keyring item with ID 12.
             gk.item_delete_sync(self.keyring, self.id)
         except gk.Error, e:
             print >>sys.stderr, 'Error deleting keyring item!\nDetails:\n%s'%e
+            return False
+
+        return True
+
+    def lock(self):
+        '''Lock a keyring.
+        '''
+
+        try:
+            gk.lock_sync(self.keyring)
+        except gk.Error, e:
+            print >>sys.stderr, 'Error locking keyring!\nDetails:\n%s'%e
+            return False
+
+        return True
+
+    def unlock(self):
+        '''Unlock a keyring.
+        '''
+
+        try:
+            gk.unlock_sync(self.keyring, self.secret)
+        except gk.Error, e:
+            print >>sys.stderr, 'Error unlocking keyring!\nDetails:\n%s'%e
             return False
 
         return True
