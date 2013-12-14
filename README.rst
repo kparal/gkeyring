@@ -28,6 +28,13 @@ The recommended way::
 
 That will find, download and install the latest available version of the program.
 
+Dependencies
+============
+
+Package dependencies (Fedora package names):
+
+* gnome-python2-gnomekeyring
+
 License
 =======
 
