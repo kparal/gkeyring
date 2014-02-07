@@ -4,12 +4,16 @@
 # A small Python tool for shell access to GNOME keyring. It provides
 # simple querying for and creating of keyring items.
 #
-# Author: Kamil Páral <kamil.paral /at/ gmail /dot/ com>, 2009-2011
+# Author: Kamil Páral <kamil.paral /at/ gmail /dot/ com>, 2009-2014
 #
 # This program is a free software, licensed under GNU AGPL 3:
 # http://www.gnu.org/licenses/agpl-3.0.html
 
 import sys, optparse, getpass
+
+# Some gnome-keyring documentation:
+# http://blogs.codecommunity.org/mindbending/bending-gnome-keyring-with-python-part-2/
+# https://developer.gnome.org/gnome-keyring/stable/
 import gnomekeyring as gk
 
 _version = '0.3'
@@ -67,7 +71,8 @@ When a new keyring item is created, its ID is printed out on the output.'''
             'default keyring]', dest=self.keyring)
         parser.add_option('--id', type='int', help='key ID')
         parser.add_option('-n', '--name',
-            help='keyring item descriptive name [mandatory if --set]')
+            help='keyring item descriptive name [exact match for querying, '
+            'mandatory if --set]')
         parser.add_option('-p', default='',
             metavar='PARAM1=VALUE1,PARAM2=VALUE2', dest='params',
             help='params and values of keyring item, e.g. user, server, '
@@ -75,14 +80,16 @@ When a new keyring item is created, its ID is printed out on the output.'''
         parser.add_option('-i', default='',
             metavar='PARAM1=VALUE1,PARAM2=VALUE2', dest='params_int',
             help='same as -p, but values are treated as integers, not strings')
+        parser.add_option('--all', action='store_true', help="Don't query for "
+            "specific keyring items, list all of them")
 
         out_group = optparse.OptionGroup(parser, 'Formatting output for '
             'querying keyring items')
-        out_group.add_option('-o', '--output', default='id,secret',
-            help='comma-separated list of columns to be printed on the output.'
-            " Column name may include any name of item's property or keywords "
-            "'id', 'secret' and 'name'. Columns will be separated by tabs. "
-            "[default: %default]")
+        out_group.add_option('-o', '--output', default='id,name,secret',
+            help='comma-separated list of columns to be printed on the output. '
+            "Column name may include keywords 'id', 'name', 'secret' or "
+            "any item's property name (displayed only when available). Columns "
+            "will be separated by tabs. [default: %default]")
         out_group.add_option('-O', '--output-attribute-names', action='store_true',
             help='show attribute names in addition to values')
         out_group.add_option('-l', '--no-newline', action='store_true',
@@ -107,6 +114,9 @@ When a new keyring item is created, its ID is printed out on the output.'''
 
         epilog=\
 """Example usage:
+$ %(prog)s --all
+List all keyring items in the default keyring.
+
 $ %(prog)s --id 12
 Get keyring item with ID 12 in default keyring.
 
@@ -153,8 +163,8 @@ Unlock the default keyring and provide the password 'qux' on the command-line.
                           options.lock or options.unlock)
         if query_mode:
             if not (options.params or options.params_int or options.name or
-                    options.id):
-                parser.error('Missing --name, -p, -i or --id! See --help.')
+                    options.id or options.all):
+                parser.error('Missing --name, -p, -i, --id or --all! See --help.')
 
         if options.set:
             if not options.name:
@@ -253,12 +263,8 @@ Unlock the default keyring and provide the password 'qux' on the command-line.
                 for match in matches:
                     result = {'id': match.item_id, 'secret': match.secret,
                               'attr': match.attributes}
-                    if self.name or 'name' in self.output:
-                        # do this only when required, because it pops up
-                        # one more 'allow access?' dialog
-                        info = gk.item_get_info_sync(self.keyring,
-                                                     match.item_id)
-                        result['name'] = info.get_display_name()
+                    info = gk.item_get_info_sync(self.keyring, match.item_id)
+                    result['name'] = info.get_display_name()
                     # filter by name if desired
                     if not self.name or self.name == result['name']:
                         results.append(result)
