@@ -36,7 +36,7 @@ Running
 
 Run::
 
-  $ gkeyring.py --help
+  $ gkeyring --help
 
 to see instructions how to control this program.
 
