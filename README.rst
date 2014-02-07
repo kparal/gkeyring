@@ -4,36 +4,41 @@ gkeyring
 
 A small Python tool for shell access to GNOME keyring. It provides simple querying for and creating of keyring items.
 
-Running
-=======
-
-You can run the tool directly simply by::
-
-  $ ./gkeyring.py
-
-or by::
-
-  $ python gkeyring.py
-
-(use --help option of course if you don't know this tool yet)
-
 Installation
 ============
 
-You can install this tool using `distutils <http://docs.python.org/install/index.html#install-index>`_, `setuptools <http://peak.telecommunity.com/DevCenter/setuptools>`_ or `pip <http://pip.openplans.org/>`_ and have it in your PATH that way.
+Distribution packages
+---------------------
 
-The recommended way::
+There are some distribution packages you can use:
 
-  # easy_install -U gkeyring
+* Arch: `gkeyring <https://aur.archlinux.org/packages/gkeyring>`_
+* Ubuntu: `gkeyring <https://launchpad.net/~kampka/+archive/ppa>`_
 
-That will find, download and install the latest available version of the program.
+PyPI
+----
 
-Dependencies
-============
+You can install this tool from `PyPI <https://pypi.python.org/pypi/gkeyring>`_ (using `pip <http://pip.openplans.org/>`_, `setuptools <http://peak.telecommunity.com/DevCenter/setuptools>`_ or `distutils <http://docs.python.org/install/index.html#install-index>`_)::
 
-Package dependencies (Fedora package names):
+  $ pip install --upgrade --user gkeyring
+
+That will find, download and install the latest available version of the program into your home directory.
+
+You might need to install some package dependencies when installing from PyPI:
 
 * gnome-python2-gnomekeyring
+
+
+... or, of course, you can check out this git repo directly.
+
+Running
+=======
+
+Run::
+
+  $ gkeyring.py --help
+
+to see instructions how to control this program.
 
 License
 =======
@@ -51,6 +56,7 @@ If you like this program, please `Flattr it <https://flattr.com/thing/49165/gkey
 Contact
 =======
 
-Visit `program homepage <https://launchpad.net/gkeyring>`_ and `support forum <https://answers.launchpad.net/gkeyring>`_.
+Visit `the program homepage <https://github.com/kparal/gkeyring>`_ and `the support forum <https://answers.launchpad.net/gkeyring>`_.
 
-Please report all bugs to the `issue tracker <https://github.com/kparal/gkeyring/issues>`_, but don't request new features unless you have a patch for it. This is a small personal project and I don't plan to spend much more time on it. I will gladly merge your patches if they look reasonable.
+Please report all bugs to the `issue tracker <https://github.com/kparal/gkeyring/issues>`_, but don't request new features unless you have a patch for it. This program is maintained, but not further developed. If you want to work on this program, don't hesitate to contact me, I will gladly assign you to the development team.
+
