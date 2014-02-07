@@ -16,7 +16,7 @@ import sys, optparse, getpass
 # https://developer.gnome.org/gnome-keyring/stable/
 import gnomekeyring as gk
 
-_version = '0.3'
+_version = '0.3.99'
 
 class CLI(object):
     ''' Class providing command-line interface for GNOME keyring '''
