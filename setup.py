@@ -4,7 +4,7 @@ from setuptools import setup
 import gkeyring
 
 setup(name='gkeyring',
-      version=gkeyring._version,
+      version=gkeyring.__version__,
       py_modules=['gkeyring'],
       entry_points = {
         'console_scripts': ['gkeyring = gkeyring:main'],

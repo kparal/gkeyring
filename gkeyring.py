@@ -9,14 +9,17 @@
 # This program is a free software, licensed under GNU AGPL 3:
 # http://www.gnu.org/licenses/agpl-3.0.html
 
-import sys, optparse, getpass
+__version__ = '0.3.99'
+
+import sys
+import optparse
+import getpass
 
 # Some gnome-keyring documentation:
 # http://blogs.codecommunity.org/mindbending/bending-gnome-keyring-with-python-part-2/
 # https://developer.gnome.org/gnome-keyring/stable/
 import gnomekeyring as gk
 
-_version = '0.3.99'
 
 class CLI(object):
     ''' Class providing command-line interface for GNOME keyring '''
