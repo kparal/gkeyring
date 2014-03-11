@@ -65,7 +65,7 @@ You can also create a new keyring item using --set. In this case the arguments
 
 When a new keyring item is created, its ID is printed out on the output.'''
 
-        parser = MyOptionParser(description=desc, version=_version)
+        parser = MyOptionParser(description=desc, version=__version__)
 
         parser.add_option('-t', '--type', choices=CLI.ITEM_TYPES.keys(),
             default='generic', help='type of keyring item: '
