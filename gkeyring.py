@@ -271,7 +271,8 @@ Unlock the default keyring and provide the password 'qux' on the command-line.
                     # filter by name if desired
                     if not self.name or self.name == result['name']:
                         results.append(result)
-        except gk.Error:
+        except gk.Error as e:
+            print e.__class__.__name__, e.message
             pass
 
         if not results:
