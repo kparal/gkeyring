@@ -266,7 +266,7 @@ Unlock the default keyring and provide the password 'qux' on the command-line.
                 for match in matches:
                     result = {'id': match.item_id, 'secret': match.secret,
                               'attr': match.attributes}
-                    info = gk.item_get_info_sync(self.keyring, match.item_id)
+                    info = gk.item_get_info_sync(match.keyring, match.item_id)
                     result['name'] = info.get_display_name()
                     # filter by name if desired
                     if not self.name or self.name == result['name']:
