@@ -9,7 +9,7 @@
 # This program is a free software, licensed under GNU AGPL 3:
 # http://www.gnu.org/licenses/agpl-3.0.html
 
-__version__ = '0.3.99'
+__version__ = '0.4'
 
 import sys
 import optparse
@@ -388,4 +388,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-
