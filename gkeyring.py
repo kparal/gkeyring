@@ -12,7 +12,7 @@
 __version__ = '0.4'
 
 import sys
-import optparse
+import argparse
 import getpass
 
 # Some gnome-keyring documentation:
@@ -47,7 +47,7 @@ class CLI(object):
         '''
 
         desc=\
-'''By default %prog queries the GNOME keyring for items matching specified
+'''By default %(prog)s queries the GNOME keyring for items matching specified
 arguments. You can define the item exactly by --id, or search for it using
 --name, -p and/or -i.
 
@@ -65,55 +65,56 @@ You can also create a new keyring item using --set. In this case the arguments
 
 When a new keyring item is created, its ID is printed out on the output.'''
 
-        parser = MyOptionParser(description=desc, version=__version__)
+        parser = argparse.ArgumentParser(
+            formatter_class=argparse.RawTextHelpFormatter)
+        parser.description = desc % {'prog': parser.prog}
 
-        parser.add_option('-t', '--type', choices=CLI.ITEM_TYPES.keys(),
+        parser.add_argument('--version', action='version', version=__version__)
+        parser.add_argument('-t', '--type', choices=CLI.ITEM_TYPES.keys(),
             default='generic', help='type of keyring item: '
-            'generic, network or note [default: %default]')
-        parser.add_option('-k', '--keyring', help='keyring name [default: '
+            'generic, network or note [default: %(default)s]')
+        parser.add_argument('-k', '--keyring', help='keyring name [default: '
             'default keyring]', dest=self.keyring)
-        parser.add_option('--id', type='int', help='key ID')
-        parser.add_option('-n', '--name',
+        parser.add_argument('--id', type=int, help='key ID')
+        parser.add_argument('-n', '--name',
             help='keyring item descriptive name [exact match for querying, '
             'mandatory if --set]')
-        parser.add_option('-p', default='',
+        parser.add_argument('-p', default='',
             metavar='PARAM1=VALUE1,PARAM2=VALUE2', dest='params',
             help='params and values of keyring item, e.g. user, server, '
             'protocol, etc.')
-        parser.add_option('-i', default='',
+        parser.add_argument('-i', default='',
             metavar='PARAM1=VALUE1,PARAM2=VALUE2', dest='params_int',
             help='same as -p, but values are treated as integers, not strings')
-        parser.add_option('--all', action='store_true', help="Don't query for "
+        parser.add_argument('--all', action='store_true', help="Don't query for "
             "specific keyring items, list all of them")
 
-        out_group = optparse.OptionGroup(parser, 'Formatting output for '
+        out_group = parser.add_argument_group('Formatting output for '
             'querying keyring items')
-        out_group.add_option('-o', '--output', default='id,name,secret',
+        out_group.add_argument('-o', '--output', default='id,name,secret',
             help='comma-separated list of columns to be printed on the output. '
             "Column name may include keywords 'id', 'name', 'secret' or "
             "any item's property name (displayed only when available). Columns "
-            "will be separated by tabs. [default: %default]")
-        out_group.add_option('-O', '--output-attribute-names', action='store_true',
+            "will be separated by tabs. [default: %(default)s]")
+        out_group.add_argument('-O', '--output-attribute-names', action='store_true',
             help='show attribute names in addition to values')
-        out_group.add_option('-l', '--no-newline', action='store_true',
+        out_group.add_argument('-l', '--no-newline', action='store_true',
             help="don't output the trailing newline")
-        out_group.add_option('-1', action='store_true', dest='output1',
+        out_group.add_argument('-1', action='store_true', dest='output1',
             help="same as '--output secret --no-newline'")
-        parser.add_option_group(out_group)
 
-        other_group = optparse.OptionGroup(parser, 'Other operations')
-        other_group.add_option('-s', '--set', action='store_true',
+        other_group = parser.add_argument_group('Other operations')
+        other_group.add_argument('-s', '--set', action='store_true',
             help='create a new item in the keyring instead of querying')
-        other_group.add_option('-d', '--delete', action='store_true',
+        other_group.add_argument('-d', '--delete', action='store_true',
             help="delete the item in the keyring identified by '--id'")
-        other_group.add_option('--lock', action='store_true',
+        other_group.add_argument('--lock', action='store_true',
             help='lock the keyring')
-        other_group.add_option('--unlock', action='store_true',
+        other_group.add_argument('--unlock', action='store_true',
             help='unlock the keyring')
-        other_group.add_option('-w', '--password',
+        other_group.add_argument('-w', '--password',
             help='provide a password for operations that require it; otherwise'
                  'you will be asked for it interactively')
-        parser.add_option_group(other_group)
 
         epilog=\
 """Example usage:
@@ -141,15 +142,17 @@ Create a new item in keyring 'login' with name 'foo' and property 'bar'.
 $ %(prog)s --delete --id 12
 Delete a keyring item with ID 12.
 
+$ %(prog)s --delete --id 12 21
+Delete keyring items with ID's 12 and 21.
+
 $ %(prog)s --lock --keyring login
 Lock keyring 'login'.
 
 $ %(prog)s --unlock --password qux
 Unlock the default keyring and provide the password 'qux' on the command-line.
 """
-        parser.epilog = epilog % {'prog': parser.get_prog_name()}
-
-        (options, args) = parser.parse_args()
+        parser.epilog = epilog % {'prog': parser.prog}
+        options = parser.parse_args()
         self.options = options
 
         # ensure that the application name is correctly set
@@ -363,17 +366,6 @@ Unlock the default keyring and provide the password 'qux' on the command-line.
             return False
 
         return True
-
-
-class MyOptionParser(optparse.OptionParser):
-    '''Overridden OptionParser not to format description and epilog, because
-    the native formatting does not respect newlines.
-    '''
-    def format_description(self, formatter):
-        return (self.get_description() or '') + '\n'
-
-    def format_epilog(self, formatter):
-        return '\n' + (self.epilog or '') + '\n'
 
 
 def main():
