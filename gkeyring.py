@@ -75,7 +75,8 @@ When a new keyring item is created, its ID is printed out on the output.'''
             'generic, network or note [default: %(default)s]')
         parser.add_argument('-k', '--keyring', help='keyring name [default: '
             'default keyring]', dest=self.keyring)
-        parser.add_argument('--id', type=int, help='key ID')
+        parser.add_argument('--id', type=int, nargs='+',
+            help='key ID, separate multiple with a space')
         parser.add_argument('-n', '--name',
             help='keyring item descriptive name [exact match for querying, '
             'mandatory if --set]')
@@ -123,6 +124,9 @@ List all keyring items in the default keyring.
 
 $ %(prog)s --id 12
 Get keyring item with ID 12 in default keyring.
+
+$ %(prog)s --id 12 21
+Get keyring items with ID's 12 and 21 in default keyring.
 
 $ %(prog)s --name 'backup'
 Search for keyring item with name 'backup'. You can easily see item names e.g.
@@ -259,11 +263,12 @@ Unlock the default keyring and provide the password 'qux' on the command-line.
 
         try:
             if self.id:
-                info = gk.item_get_info_sync(self.keyring, self.id)
-                attr = gk.item_get_attributes_sync(self.keyring, self.id)
-                result = {'id': self.id, 'secret': info.get_secret(),
-                          'name': info.get_display_name(), 'attr': attr}
-                results.append(result)
+                for id in self.id:
+                    info = gk.item_get_info_sync(self.keyring, id)
+                    attr = gk.item_get_attributes_sync(self.keyring, id)
+                    result = {'id': id, 'secret': info.get_secret(),
+                              'name': info.get_display_name(), 'attr': attr}
+                    results.append(result)
             else:
                 matches = gk.find_items_sync(self.item_type, self.params)
                 for match in matches:
@@ -334,12 +339,12 @@ Unlock the default keyring and provide the password 'qux' on the command-line.
 
         Return True if item created successfully, False otherwise.
         '''
-
-        try:
-            gk.item_delete_sync(self.keyring, self.id)
-        except gk.Error, e:
-            print >>sys.stderr, 'Error deleting keyring item!\nDetails:\n%s'%e
-            return False
+        for id in self.id:
+            try:
+                gk.item_delete_sync(self.keyring, id)
+            except gk.Error, e:
+                print >>sys.stderr, 'Error deleting keyring item!\nDetails:\n%s'%e
+                return False
 
         return True
 
