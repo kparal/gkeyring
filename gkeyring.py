@@ -263,10 +263,10 @@ Unlock the default keyring and provide the password 'qux' on the command-line.
 
         try:
             if self.id:
-                for id in self.id:
-                    info = gk.item_get_info_sync(self.keyring, id)
-                    attr = gk.item_get_attributes_sync(self.keyring, id)
-                    result = {'id': id, 'secret': info.get_secret(),
+                for item_id in self.id:
+                    info = gk.item_get_info_sync(self.keyring, item_id)
+                    attr = gk.item_get_attributes_sync(self.keyring, item_id)
+                    result = {'id': item_id, 'secret': info.get_secret(),
                               'name': info.get_display_name(), 'attr': attr}
                     results.append(result)
             else:
@@ -324,13 +324,13 @@ Unlock the default keyring and provide the password 'qux' on the command-line.
         '''
 
         try:
-            id = gk.item_create_sync(self.keyring, self.item_type, self.name,
-                                     self.params, self.secret, False)
+            item_id = gk.item_create_sync(self.keyring, self.item_type,
+                self.name, self.params, self.secret, False)
         except gk.Error, e:
             print >>sys.stderr, 'Error creating keyring item!\nDetails:\n%s'%e
             return False
 
-        print id
+        print item_id
 
         return True
 
@@ -339,9 +339,9 @@ Unlock the default keyring and provide the password 'qux' on the command-line.
 
         Return True if item created successfully, False otherwise.
         '''
-        for id in self.id:
+        for item_id in self.id:
             try:
-                gk.item_delete_sync(self.keyring, id)
+                gk.item_delete_sync(self.keyring, item_id)
             except gk.Error, e:
                 print >>sys.stderr, 'Error deleting keyring item!\nDetails:\n%s'%e
                 return False
